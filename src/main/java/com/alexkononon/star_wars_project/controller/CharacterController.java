@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/characters")
+@RequestMapping("/api/characters")
 public class CharacterController {
 
     private final CharacterService characterService;
@@ -23,6 +23,7 @@ public class CharacterController {
         CharacterDTO createdCharacter = characterService.createCharacter(characterDTO);
         return new ResponseEntity<>(createdCharacter, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<CharacterDTO> getCharacter(@PathVariable Long id) {

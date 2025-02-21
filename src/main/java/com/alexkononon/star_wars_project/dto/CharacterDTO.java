@@ -1,24 +1,29 @@
 package com.alexkononon.star_wars_project.dto;
 
-import com.alexkononon.star_wars_project.entity.Character;
-import com.alexkononon.star_wars_project.entity.Faction;
-import com.alexkononon.star_wars_project.entity.Mission;
+import com.alexkononon.star_wars_project.entity.core.Character;
+import com.alexkononon.star_wars_project.entity.core.Faction;
+import com.alexkononon.star_wars_project.entity.core.Mission;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 
 
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@JsonIgnoreProperties({"entityType", "deleted"})
 @Getter
 @Setter
-
-public class CharacterDTO extends StarWarsEntityDTO{
+@NoArgsConstructor
+public class CharacterDTO {
     //Required fields
+    private Long id;
     private String name;
     private String status;
     private int currentXp;
+    private boolean isDeleted;
     //Required dependencies
     private Long currentLocationId;
 
@@ -34,7 +39,7 @@ public class CharacterDTO extends StarWarsEntityDTO{
     private Long baseLocationId;
 
     public CharacterDTO(Character character) {
-        super(character.getId(), character.getStarWarsEntity().getEntityType(), character.isDeleted());
+        this.id = character.getId();
         this.name = character.getName();
         this.status = character.getStatus();
         this.currentXp = character.getCurrent_xp();
@@ -42,6 +47,7 @@ public class CharacterDTO extends StarWarsEntityDTO{
         this.maxSimultaneousMissions = character.getMax_simultaneous_missions();
         this.completedMissions = character.getCompleted_missions();
         this.currentLocationId = character.getCurrentLocation().getId();
+        this.isDeleted = character.isDeleted();
 
         if (character.getMissions() != null) {
             this.missionIds = character.getMissions().stream()
