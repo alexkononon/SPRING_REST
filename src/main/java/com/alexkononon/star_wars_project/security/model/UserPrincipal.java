@@ -1,4 +1,4 @@
-package com.alexkononon.star_wars_project.security.entity;
+package com.alexkononon.star_wars_project.security.model;
 
 import com.alexkononon.star_wars_project.entity.security.User;
 import org.springframework.security.core.GrantedAuthority;
