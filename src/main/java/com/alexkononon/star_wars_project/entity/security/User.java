@@ -20,8 +20,8 @@ public class User {
     @Column(nullable = false, length = 50)
     private String username;
 
-    @Column(name = "password_hash", nullable = false, length = 255)
-    private String passwordHash;
+    @Column(nullable = false, length = 255)
+    private String password;
 
 
     @Column(name = "is_deleted", nullable = false, columnDefinition = "TINYINT(1)")

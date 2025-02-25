@@ -11,24 +11,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/characters")
 public class CharacterController {
 
-    private final CharacterService characterService;
-
     @Autowired
-    public CharacterController(CharacterService characterService) {
-        this.characterService = characterService;
-    }
+    private CharacterService characterService;
 
     @PostMapping
-    public ResponseEntity<CharacterDTO> createCharacter(@RequestBody CharacterDTO characterDTO) {
-        CharacterDTO createdCharacter = characterService.createCharacter(characterDTO);
-        return new ResponseEntity<>(createdCharacter, HttpStatus.CREATED);
+    public ResponseEntity<HttpStatus> createCharacter(@RequestBody CharacterDTO characterDTO) {
+        characterService.createCharacter(characterDTO);
+        return ResponseEntity.ok(HttpStatus.CREATED);
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<CharacterDTO> getCharacter(@PathVariable Long id) {
-        CharacterDTO character = characterService.getCharacter(id);
-        return ResponseEntity.ok(character);
+        return ResponseEntity.ok(characterService.getCharacter(id));
     }
 }
 
