@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/apic")
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
@@ -28,4 +28,8 @@ public class UserController {
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
+    @PostMapping("/login")
+    public String login(@RequestBody UserDTO user) {
+        return userService.verify(user);
+    }
 }
