@@ -5,102 +5,73 @@ import com.alexkononon.star_wars_project.entity.core.Character;
 import com.alexkononon.star_wars_project.entity.core.Location;
 import com.alexkononon.star_wars_project.entity.core.Mission;
 import com.alexkononon.star_wars_project.entity.core.Planet;
+import com.alexkononon.star_wars_project.repository.core.CharacterRepository;
+import com.alexkononon.star_wars_project.repository.core.LocationRepository;
+import com.alexkononon.star_wars_project.repository.core.MissionRepository;
+import com.alexkononon.star_wars_project.repository.core.PlanetRepository;
 import org.mapstruct.*;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {LocationRepository.class, PlanetRepository.class, MissionRepository.class, CharacterRepository.class})
 public interface LocationMapper {
 
-    @Mapping(target = "planet", source = "planetId", qualifiedByName = "mapPlanet")
-    @Mapping(target = "missions", source = "missionsId", qualifiedByName = "mapMissions")
-    @Mapping(target = "livingCharacters", source = "livingCharactersId", qualifiedByName = "mapLivingCharacters")
-    @Mapping(target = "stayingCharacters", source = "stayingCharactersId", qualifiedByName = "mapStayingCharacters")
+    @Mapping(target = "planet", source = "planetId", qualifiedByName = "mapToPlanet")
+    @Mapping(target = "missions", source = "missionsId", qualifiedByName = "mapToMissions")
+    @Mapping(target = "livingCharacters", source = "livingCharactersId", qualifiedByName = "mapToCharacters")
+    @Mapping(target = "stayingCharacters", source = "stayingCharactersId", qualifiedByName = "mapToCharacters")
     @Mapping(target = "deleted", ignore = true)
-    Location fromDtoToLocation(LocationDTO dto);
+    Location fromDtoToLocation(LocationDTO dto, @Context PlanetRepository planetRepository,
+                               @Context MissionRepository missionRepository, @Context CharacterRepository characterRepository);
 
     @Mapping(target = "planetId", source = "planet.id")
-    @Mapping(target = "missionsId", source = "missions", qualifiedByName = "mapMissionIds")
-    @Mapping(target = "livingCharactersId", source = "livingCharacters", qualifiedByName = "mapLivingCharacterIds")
-    @Mapping(target = "stayingCharactersId", source = "stayingCharacters", qualifiedByName = "mapStayingCharacterIds")
+    @Mapping(target = "missionsId", expression = "java(mapMissionIds(location.getMissions()))")
+    @Mapping(target = "livingCharactersId", expression = "java(mapCharacterIds(location.getLivingCharacters()))")
+    @Mapping(target = "stayingCharactersId", expression = "java(mapCharacterIds(location.getStayingCharacters()))")
     LocationDTO fromLocationToDTO(Location location);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "planet", source = "planetId", qualifiedByName = "mapPlanet")
-    @Mapping(target = "missions", source = "missionsId", qualifiedByName = "mapMissions")
-    @Mapping(target = "livingCharacters", source = "livingCharactersId", qualifiedByName = "mapLivingCharacters")
-    @Mapping(target = "stayingCharacters", source = "stayingCharactersId", qualifiedByName = "mapStayingCharacters")
+    @Mapping(target = "planet", source = "planetId", qualifiedByName = "mapToPlanet")
+    @Mapping(target = "missions", source = "missionsId", qualifiedByName = "mapToMissions")
+    @Mapping(target = "livingCharacters", source = "livingCharactersId", qualifiedByName = "mapToCharacters")
+    @Mapping(target = "stayingCharacters", source = "stayingCharactersId", qualifiedByName = "mapToCharacters")
     @Mapping(target = "deleted", ignore = true)
-    void updateLocationFromDto(LocationDTO dto, @MappingTarget Location location);
+    void updateLocationFromDto(LocationDTO dto, @MappingTarget Location location,
+                               @Context PlanetRepository planetRepository,
+                               @Context MissionRepository missionRepository,
+                               @Context CharacterRepository characterRepository);
 
-    @Named("mapPlanet")
-    default Planet mapPlanet(Long planetId) {
-        if (planetId == null) {
-            return null;
-        }
-        Planet planet = new Planet();
-        planet.setId(planetId);
-        return planet;
+    @Named("mapToPlanet")
+    default Planet mapToPlanet(Long planetId, @Context PlanetRepository planetRepository) {
+        return planetId == null ? null : planetRepository.findById(planetId)
+                .orElseThrow(() -> new RuntimeException("Planet not found with id: " + planetId));
     }
 
-    @Named("mapMissions")
-    default Set<Mission> mapMissions(Set<Long> missionsId) {
-        if (missionsId == null) {
-            return null;
-        }
-        return missionsId.stream().map(id -> {
-            Mission mission = new Mission();
-            mission.setId(id);
-            return mission;
-        }).collect(Collectors.toSet());
+    @Named("mapToMissions")
+    default Set<Mission> mapToMissions(Set<Long> missionsId, @Context MissionRepository missionRepository) {
+        return missionsId == null ? Set.of() : missionsId.stream()
+                .map(id -> missionRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Mission not found with id: " + id)))
+                .collect(Collectors.toSet());
     }
 
-    @Named("mapLivingCharacters")
-    default Set<Character> mapLivingCharacters(Set<Long> livingCharactersId) {
-        if (livingCharactersId == null) {
-            return null;
-        }
-        return livingCharactersId.stream().map(id -> {
-            Character character = new Character();
-            character.setId(id);
-            return character;
-        }).collect(Collectors.toSet());
+    @Named("mapToCharacters")
+    default Set<Character> mapToCharacters(Set<Long> characterIds, @Context CharacterRepository characterRepository) {
+        return characterIds == null ? Set.of() : characterIds.stream()
+                .map(id -> characterRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Character not found with id: " + id)))
+                .collect(Collectors.toSet());
     }
 
-    @Named("mapStayingCharacters")
-    default Set<Character> mapStayingCharacters(Set<Long> stayingCharactersId) {
-        if (stayingCharactersId == null) {
-            return null;
-        }
-        return stayingCharactersId.stream().map(id -> {
-            Character character = new Character();
-            character.setId(id);
-            return character;
-        }).collect(Collectors.toSet());
-    }
-
-    @Named("mapMissionIds")
     default Set<Long> mapMissionIds(Set<Mission> missions) {
-        if (missions == null) {
-            return null;
-        }
-        return missions.stream().map(Mission::getId).collect(Collectors.toSet());
+        return missions == null ? Set.of() : missions.stream()
+                .map(Mission::getId).collect(Collectors.toSet());
     }
 
-    @Named("mapLivingCharacterIds")
-    default Set<Long> mapLivingCharacterIds(Set<Character> livingCharacters) {
-        if (livingCharacters == null) {
-            return null;
-        }
-        return livingCharacters.stream().map(Character::getId).collect(Collectors.toSet());
-    }
-
-    @Named("mapStayingCharacterIds")
-    default Set<Long> mapStayingCharacterIds(Set<Character> stayingCharacters) {
-        if (stayingCharacters == null) {
-            return null;
-        }
-        return stayingCharacters.stream().map(Character::getId).collect(Collectors.toSet());
+    default Set<Long> mapCharacterIds(Set<Character> characters) {
+        return characters == null ? Set.of() : characters.stream()
+                .map(Character::getId).collect(Collectors.toSet());
     }
 }
+

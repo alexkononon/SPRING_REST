@@ -9,14 +9,14 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @Mapping(target = "role", expression = "java(map(userDTO.getRole(), roleRepository))")
+    @Mapping(target = "role", expression = "java(mapToRole(userDTO.getRole(), roleRepository))")
     @Mapping(target = "deleted", ignore = true)
     User fromDtoToUser(UserDTO userDTO, @Context RoleRepository roleRepository);
 
     @Mapping(target = "role", source = "role.name")
     UserDTO fromUserToDTO(User user);
 
-    default Role map(String roleName, @Context RoleRepository roleRepository) {
+    default Role mapToRole(String roleName, @Context RoleRepository roleRepository) {
         return roleRepository.findByName(roleName)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
     }

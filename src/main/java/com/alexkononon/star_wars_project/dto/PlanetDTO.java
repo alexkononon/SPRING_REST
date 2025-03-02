@@ -15,5 +15,5 @@ public class PlanetDTO {
     private String name;
     private String description;
     private Long factionId;
-    private Set<Long> locations = new HashSet<>();
+    private Set<Long> locationIds = new HashSet<>();
 }
