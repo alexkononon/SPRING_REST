@@ -1,6 +1,5 @@
 package com.alexkononon.star_wars_project.controller;
 
-
 import com.alexkononon.star_wars_project.dto.CharacterDTO;
 import com.alexkononon.star_wars_project.dto.RegistrationRequest;
 import com.alexkononon.star_wars_project.dto.UserDTO;
@@ -33,6 +32,5 @@ public class UserController {
     @PostMapping("/login")
     public String login(@RequestBody UserDTO user) {
         return userService.verify(user);
-
     }
 }

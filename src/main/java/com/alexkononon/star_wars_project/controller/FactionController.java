@@ -18,8 +18,7 @@ public class FactionController {
 
     @PostMapping
     public ResponseEntity<FactionDTO> createFaction(@RequestBody FactionDTO dto) {
-        FactionDTO created = factionService.createFaction(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(factionService.createFaction(dto));
     }
 
     @GetMapping("/{id}")
@@ -29,13 +28,12 @@ public class FactionController {
 
     @PutMapping("/{id}")
     public ResponseEntity<FactionDTO> updateFaction(@PathVariable Long id, @RequestBody FactionDTO dto) {
-        FactionDTO updated = factionService.updateFaction(id, dto);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(factionService.updateFaction(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFaction(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteFaction(@PathVariable Long id) {
         factionService.deleteFaction(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 }

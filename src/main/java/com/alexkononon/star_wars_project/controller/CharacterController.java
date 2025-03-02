@@ -17,9 +17,8 @@ public class CharacterController {
     }
 
     @PostMapping
-    public ResponseEntity<HttpStatus> createCharacter(@RequestBody CharacterDTO characterDTO) {
-        characterService.createCharacter(characterDTO);
-        return ResponseEntity.ok(HttpStatus.CREATED);
+    public ResponseEntity<CharacterDTO> createCharacter(@RequestBody CharacterDTO characterDTO) {
+        return ResponseEntity.ok(characterService.createCharacter(characterDTO));
     }
 
     @GetMapping("/{id}")
@@ -35,7 +34,7 @@ public class CharacterController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteCharacter(@PathVariable Long id) {
         characterService.deleteCharacter(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 }
 
