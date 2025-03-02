@@ -2,7 +2,6 @@ package com.alexkononon.star_wars_project.controller;
 
 import com.alexkononon.star_wars_project.dto.CharacterDTO;
 import com.alexkononon.star_wars_project.service.CharacterService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,8 +10,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/characters")
 public class CharacterController {
 
-    @Autowired
-    private CharacterService characterService;
+    private final CharacterService characterService;
+
+    public CharacterController(CharacterService characterService) {
+        this.characterService = characterService;
+    }
 
     @PostMapping
     public ResponseEntity<HttpStatus> createCharacter(@RequestBody CharacterDTO characterDTO) {
@@ -23,6 +25,17 @@ public class CharacterController {
     @GetMapping("/{id}")
     public ResponseEntity<CharacterDTO> getCharacter(@PathVariable Long id) {
         return ResponseEntity.ok(characterService.getCharacter(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CharacterDTO> updateCharacter(@PathVariable Long id, @RequestBody CharacterDTO characterDTO) {
+        return ResponseEntity.ok(characterService.updateCharacter(id, characterDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteCharacter(@PathVariable Long id) {
+        characterService.deleteCharacter(id);
+        return ResponseEntity.noContent().build();
     }
 }
 
