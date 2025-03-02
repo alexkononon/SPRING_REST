@@ -3,6 +3,7 @@ package com.alexkononon.star_wars_project.entity.core;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@SQLDelete(sql = "UPDATE planets SET is_deleted = true WHERE id = ?")
 @Table(name = "Planets")
 public class Planet {
     @Id
@@ -32,5 +34,11 @@ public class Planet {
 
     @OneToMany(mappedBy = "planet", cascade = CascadeType.ALL)
     private Set<Location> locations = new HashSet<>();
+
+
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
 
 }

@@ -4,10 +4,12 @@ import com.alexkononon.star_wars_project.enums.EntityType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @Setter
 @Entity
+@SQLDelete(sql = "UPDATE entities SET is_deleted = true WHERE id = ?")
 @Table(name = "Entities")
 public class EntityObject {
     @Id

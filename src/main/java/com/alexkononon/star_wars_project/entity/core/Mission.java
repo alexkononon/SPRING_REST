@@ -4,6 +4,7 @@ import com.alexkononon.star_wars_project.enums.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@SQLDelete(sql = "UPDATE missions SET is_deleted = true WHERE id = ?")
 @Table(name = "Missions")
 public class Mission {
     @Id

@@ -3,6 +3,7 @@ package com.alexkononon.star_wars_project.entity.core;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,6 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@SQLDelete(sql = "UPDATE factions SET is_deleted = true WHERE id = ?")
 @Table(name = "Factions")
 public class Faction {
     @Id
@@ -33,7 +35,7 @@ public class Faction {
     )
     private Set<Faction> enemyFactions = new HashSet<>();
 
-    @OneToMany(mappedBy = "faction", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "faction")
     private Set<Planet> planets = new HashSet<>();
 
     @ManyToMany

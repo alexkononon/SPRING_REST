@@ -4,10 +4,12 @@ import com.alexkononon.star_wars_project.enums.DroidSeries;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @Setter
 @Entity
+@SQLDelete(sql = "UPDATE droids SET is_deleted = true WHERE id = ?")
 @Table(name = "Droids")
 public class Droid {
     @Id

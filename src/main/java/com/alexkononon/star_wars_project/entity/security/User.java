@@ -5,6 +5,7 @@ import com.alexkononon.star_wars_project.entity.core.Notification;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@SQLDelete(sql = "UPDATE users SET is_deleted = true WHERE id = ?")
 @Table(name = "Users")
 public class User {
     @Id

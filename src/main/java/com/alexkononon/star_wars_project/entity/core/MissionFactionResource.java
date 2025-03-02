@@ -2,10 +2,12 @@ package com.alexkononon.star_wars_project.entity.core;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @Setter
 @Entity
+@SQLDelete(sql = "UPDATE Missions_Resources SET is_deleted = true WHERE mission_id = ? AND resource_id = ? AND faction_id = ?")
 @Table(name = "Missions_Resources")
 public class MissionFactionResource {
 
