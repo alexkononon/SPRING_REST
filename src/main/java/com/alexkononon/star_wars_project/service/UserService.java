@@ -12,41 +12,44 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.alexkononon.star_wars_project.entity.security.User;
 
-@Transactional
+
 @Service
+@Transactional
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    CharacterMapper characterMapper;
+    final CharacterMapper characterMapper;
 
-    @Autowired
-    private CharacterService characterService;
+    private final CharacterService characterService;
 
-    @Autowired
-    private CharacterRepository characterRepository;
+    private final CharacterRepository characterRepository;
 
-    @Autowired
-    private JWTService jwtService;
+    private final JWTService jwtService;
 
-    @Autowired
-    AuthenticationManager authManager;
+    final AuthenticationManager authManager;
 
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper, CharacterMapper characterMapper, CharacterService characterService, CharacterRepository characterRepository, JWTService jwtService, AuthenticationManager authManager) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.userMapper = userMapper;
+        this.characterMapper = characterMapper;
+        this.characterService = characterService;
+        this.characterRepository = characterRepository;
+        this.jwtService = jwtService;
+        this.authManager = authManager;
+    }
 
     public void register(UserDTO userDTO, CharacterDTO characterDTO) {
         CharacterDTO character = characterService.createCharacter(characterDTO);
@@ -63,7 +66,7 @@ public class UserService {
         if (authentication.isAuthenticated()) {
             return jwtService.generateToken(userDTO.getUsername())  ;
         } else {
-            return "fail";
+            return "Failed";
         }
     }
 }

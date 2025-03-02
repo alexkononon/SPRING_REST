@@ -10,6 +10,7 @@ import org.mapstruct.*;
 public interface UserMapper {
 
     @Mapping(target = "role", expression = "java(map(userDTO.getRole(), roleRepository))")
+    @Mapping(target = "deleted", ignore = true)
     User fromDtoToUser(UserDTO userDTO, @Context RoleRepository roleRepository);
 
     @Mapping(target = "role", source = "role.name")

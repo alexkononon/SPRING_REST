@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -18,14 +19,19 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class JWTFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JWTService jwtService;
+    private final JWTService jwtService;
 
-    @Autowired
+    final
     ApplicationContext context;
+
+    public JWTFilter(JWTService jwtService, ApplicationContext context) {
+        this.jwtService = jwtService;
+        this.context = context;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
