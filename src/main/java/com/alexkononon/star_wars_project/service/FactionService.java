@@ -1,56 +1,45 @@
 package com.alexkononon.star_wars_project.service;
 
 import com.alexkononon.star_wars_project.dto.FactionDTO;
-import com.alexkononon.star_wars_project.entity.core.Faction;
-import com.alexkononon.star_wars_project.mapper.FactionMapper;
-import com.alexkononon.star_wars_project.repository.core.CharacterRepository;
-import com.alexkononon.star_wars_project.repository.core.FactionRepository;
-import com.alexkononon.star_wars_project.repository.core.PlanetRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
 
-@Service
-@Transactional
-public class FactionService {
+/**
+ * Service interface for managing factions.
+ * Provides methods for creating, retrieving, updating, and deleting factions.
+ */
+public interface FactionService {
 
-    private final FactionRepository factionRepository;
-    private final FactionMapper factionMapper;
-    private final CharacterRepository characterRepository;
-    private final PlanetRepository planetRepository;
+    /**
+     * Creates a new faction based on the provided DTO.
+     *
+     * @param dto the faction data transfer object
+     * @return the created faction as a DTO
+     */
+    FactionDTO createFaction(FactionDTO dto);
 
-    public FactionService(FactionRepository factionRepository, FactionMapper factionMapper,
-                          CharacterRepository characterRepository, PlanetRepository planetRepository) {
-        this.factionRepository = factionRepository;
-        this.factionMapper = factionMapper;
-        this.characterRepository = characterRepository;
-        this.planetRepository = planetRepository;
-    }
+    /**
+     * Retrieves the faction with the specified ID.
+     *
+     * @param id the unique identifier of the faction
+     * @return the faction as a DTO
+     * @throws RuntimeException if the faction is not found
+     */
+    FactionDTO getFaction(Long id);
 
-    public FactionDTO createFaction(FactionDTO dto) {
-        Faction faction = factionMapper.fromDtoToFaction(dto, factionRepository, planetRepository, characterRepository);
-        faction = factionRepository.save(faction);
-        return factionMapper.fromFactionToDTO(faction);
-    }
+    /**
+     * Updates an existing faction with the provided data.
+     *
+     * @param id the unique identifier of the faction to update
+     * @param dto the updated faction data transfer object
+     * @return the updated faction as a DTO
+     * @throws RuntimeException if the faction is not found
+     */
+    FactionDTO updateFaction(Long id, FactionDTO dto);
 
-    public FactionDTO getFaction(Long id) {
-        return factionRepository.findById(id)
-                .map(factionMapper::fromFactionToDTO)
-                .orElseThrow(() -> new RuntimeException("Faction not found with id: " + id));
-    }
-
-    public FactionDTO updateFaction(Long id, FactionDTO dto) {
-        Faction faction = factionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Faction not found with id: " + id));
-
-        factionMapper.updateFactionFromDto(dto, faction, factionRepository, planetRepository, characterRepository);
-        faction = factionRepository.save(faction);
-        return factionMapper.fromFactionToDTO(faction);
-    }
-
-    public void deleteFaction(Long id) {
-        if (!factionRepository.existsById(id)) {
-            throw new RuntimeException("Faction not found with id: " + id);
-        }
-        factionRepository.deleteById(id);
-    }
+    /**
+     * Deletes the faction with the specified ID.
+     *
+     * @param id the unique identifier of the faction to delete
+     * @throws RuntimeException if the faction is not found
+     */
+    void deleteFaction(Long id);
 }

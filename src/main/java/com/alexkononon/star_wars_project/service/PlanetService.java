@@ -1,57 +1,45 @@
 package com.alexkononon.star_wars_project.service;
 
 import com.alexkononon.star_wars_project.dto.PlanetDTO;
-import com.alexkononon.star_wars_project.entity.core.Planet;
-import com.alexkononon.star_wars_project.mapper.PlanetMapper;
-import com.alexkononon.star_wars_project.repository.core.FactionRepository;
-import com.alexkononon.star_wars_project.repository.core.LocationRepository;
-import com.alexkononon.star_wars_project.repository.core.PlanetRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
 
-@Service
-@Transactional
-public class PlanetService {
+/**
+ * Service interface for managing planets.
+ * Provides methods for creating, retrieving, updating, and deleting planets.
+ */
+public interface PlanetService {
 
-    private final PlanetMapper planetMapper;
-    private final PlanetRepository planetRepository;
-    private final FactionRepository factionRepository;
-    private final LocationRepository locationRepository;
+    /**
+     * Creates a new planet based on the provided DTO.
+     *
+     * @param planetDTO the planet data transfer object
+     * @return the created planet as a DTO
+     */
+    PlanetDTO createPlanet(PlanetDTO planetDTO);
 
-    public PlanetService(PlanetMapper planetMapper, PlanetRepository planetRepository,
-                         FactionRepository factionRepository, LocationRepository locationRepository) {
-        this.planetMapper = planetMapper;
-        this.planetRepository = planetRepository;
-        this.factionRepository = factionRepository;
-        this.locationRepository = locationRepository;
-    }
+    /**
+     * Retrieves the planet with the specified ID.
+     *
+     * @param id the unique identifier of the planet
+     * @return the planet as a DTO
+     * @throws RuntimeException if the planet is not found
+     */
+    PlanetDTO getPlanet(Long id);
 
-    public PlanetDTO createPlanet(PlanetDTO planetDTO) {
-        Planet planet = planetMapper.fromDtoToPlanet(planetDTO, factionRepository, locationRepository);
-        planet = planetRepository.save(planet);
-        return planetMapper.fromPlanetToDTO(planet);
-    }
+    /**
+     * Updates an existing planet with the provided data.
+     *
+     * @param id the unique identifier of the planet to update
+     * @param planetDTO the updated planet data transfer object
+     * @return the updated planet as a DTO
+     * @throws RuntimeException if the planet is not found
+     */
+    PlanetDTO updatePlanet(Long id, PlanetDTO planetDTO);
 
-    public PlanetDTO getPlanet(Long id) {
-        Planet planet = planetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Planet not found"));
-        return planetMapper.fromPlanetToDTO(planet);
-    }
-
-    public PlanetDTO updatePlanet(Long id, PlanetDTO planetDTO) {
-        Planet planet = planetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Planet not found"));
-
-        planetMapper.updatePlanetFromDto(planetDTO, planet, factionRepository, locationRepository);
-
-        planet = planetRepository.save(planet);
-        return planetMapper.fromPlanetToDTO(planet);
-    }
-
-    public void deletePlanet(Long id) {
-        if (!planetRepository.existsById(id)) {
-            throw new RuntimeException("Planet not found with id: " + id);
-        }
-        planetRepository.deleteById(id);
-    }
+    /**
+     * Deletes the planet with the specified ID.
+     *
+     * @param id the unique identifier of the planet to delete
+     * @throws RuntimeException if the planet is not found
+     */
+    void deletePlanet(Long id);
 }

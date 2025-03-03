@@ -1,55 +1,45 @@
 package com.alexkononon.star_wars_project.service;
 
 import com.alexkononon.star_wars_project.dto.CharacterDTO;
-import com.alexkononon.star_wars_project.entity.core.Character;
-import com.alexkononon.star_wars_project.mapper.CharacterMapper;
-import com.alexkononon.star_wars_project.repository.core.*;
-import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
 
-@Transactional
-@Service
-public class CharacterService {
+/**
+ * Service interface for managing characters.
+ * Provides methods for creating, retrieving, updating, and deleting characters.
+ */
+public interface CharacterService {
 
-    private final CharacterMapper characterMapper;
-    private final CharacterRepository characterRepository;
-    private final LocationRepository locationRepository;
-    private final MissionRepository missionRepository;
-    private final FactionRepository factionRepository;
+    /**
+     * Creates a new character based on the provided DTO.
+     *
+     * @param characterDTO the character data transfer object
+     * @return the created character as a DTO
+     */
+    CharacterDTO createCharacter(CharacterDTO characterDTO);
 
-    public CharacterService(CharacterMapper characterMapper, CharacterRepository characterRepository, LocationRepository locationRepository,
-                            MissionRepository missionRepository, FactionRepository factionRepository) {
-        this.characterMapper = characterMapper;
-        this.characterRepository = characterRepository;
-        this.locationRepository = locationRepository;
-        this.missionRepository = missionRepository;
-        this.factionRepository = factionRepository;
-    }
+    /**
+     * Retrieves the character with the specified ID.
+     *
+     * @param id the unique identifier of the character
+     * @return the character as a DTO
+     * @throws RuntimeException if the character is not found
+     */
+    CharacterDTO getCharacter(Long id);
 
-    public CharacterDTO createCharacter(CharacterDTO characterDTO) {
-        Character character = characterMapper.fromDtoToCharacter(characterDTO, locationRepository, characterRepository, missionRepository, factionRepository);
-        character = characterRepository.save(character);
-        return characterMapper.fromCharacterToDTO(character);
-    }
+    /**
+     * Updates an existing character with the provided data.
+     *
+     * @param id the unique identifier of the character to update
+     * @param characterDTO the updated character data transfer object
+     * @return the updated character as a DTO
+     * @throws RuntimeException if the character is not found
+     */
+    CharacterDTO updateCharacter(Long id, CharacterDTO characterDTO);
 
-    public CharacterDTO getCharacter(Long id) {
-        Character character = characterRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Character not found"));
-        return characterMapper.fromCharacterToDTO(character);
-    }
-
-    public CharacterDTO updateCharacter(Long id, CharacterDTO characterDTO) {
-        Character character = characterRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Character not found"));
-        characterMapper.updateCharacterFromDto(characterDTO, character, locationRepository, characterRepository, missionRepository, factionRepository);
-        character = characterRepository.save(character);
-        return characterMapper.fromCharacterToDTO(character);
-    }
-
-    public void deleteCharacter(Long id) {
-        if (!characterRepository.existsById(id)) {
-            throw new RuntimeException("Faction not found with id: " + id);
-        }
-        characterRepository.deleteById(id);
-    }
+    /**
+     * Deletes the character with the specified ID.
+     *
+     * @param id the unique identifier of the character to delete
+     * @throws RuntimeException if the character is not found
+     */
+    void deleteCharacter(Long id);
 }
