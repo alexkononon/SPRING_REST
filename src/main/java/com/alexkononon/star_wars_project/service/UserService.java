@@ -2,71 +2,39 @@ package com.alexkononon.star_wars_project.service;
 
 import com.alexkononon.star_wars_project.dto.CharacterDTO;
 import com.alexkononon.star_wars_project.dto.UserDTO;
-import com.alexkononon.star_wars_project.mapper.CharacterMapper;
-import com.alexkononon.star_wars_project.mapper.UserMapper;
-import com.alexkononon.star_wars_project.repository.core.CharacterRepository;
-import com.alexkononon.star_wars_project.repository.security.RoleRepository;
-import com.alexkononon.star_wars_project.repository.security.UserRepository;
-import com.alexkononon.star_wars_project.security.service.JWTService;
-import jakarta.transaction.Transactional;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import com.alexkononon.star_wars_project.entity.security.User;
 
+/**
+ * Service interface for managing user registration and authentication.
+ * Provides methods for registering new users (with their character data)
+ * and verifying user credentials (for login).
+ */
+public interface UserService {
 
-@Service
-@Transactional
-public class UserService {
+    /**
+     * Registers a new user along with associated character information.
+     *
+     * @param userDTO the user data transfer object, default Role = USER
+     * @param characterDTO the character data transfer object associated with the user
+     */
+    void register(UserDTO userDTO, CharacterDTO characterDTO);
 
-    private final UserRepository userRepository;
+    /**
+     * Verifies the user's credentials and returns a JWT token upon successful authentication.
+     *
+     * @param userDTO the user data transfer object containing login credentials
+     * @return a JWT token if authentication is successful, otherwise an error message
+     */
+    String verify(UserDTO userDTO);
 
-    private final RoleRepository roleRepository;
+    /**
+     * Updates the role of a specific user.
+     *
+     * <p>This method assigns a new role to the user with the given {@code userId}. The new role should be provided
+     * as a valid role identifier (for example, "USER", "ADMIN", etc.).
+     *
+     * @param userId  the unique identifier of the user whose role is to be updated
+     * @param newRole the new role to assign to the user
+     */
+    void updateUserRole(Long userId, String newRole);
 
-    private final UserMapper userMapper;
-
-    final CharacterMapper characterMapper;
-
-    private final CharacterService characterService;
-
-    private final CharacterRepository characterRepository;
-
-    private final JWTService jwtService;
-
-    final AuthenticationManager authManager;
-
-
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
-
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper, CharacterMapper characterMapper, CharacterService characterService, CharacterRepository characterRepository, JWTService jwtService, AuthenticationManager authManager) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.userMapper = userMapper;
-        this.characterMapper = characterMapper;
-        this.characterService = characterService;
-        this.characterRepository = characterRepository;
-        this.jwtService = jwtService;
-        this.authManager = authManager;
-    }
-
-    public void register(UserDTO userDTO, CharacterDTO characterDTO) {
-        CharacterDTO character = characterService.createCharacter(characterDTO);
-
-        User user = userMapper.fromDtoToUser(userDTO, roleRepository);
-        user.setPassword(encoder.encode(user.getPassword()));
-        user.setCharacter(characterRepository.findById(character.getId()).orElseThrow());
-        userRepository.save(user);
-        userMapper.fromUserToDTO(user);
-    }
-
-    public String verify(UserDTO userDTO) {
-        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword()));
-        if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(userDTO.getUsername())  ;
-        } else {
-            return "Failed";
-        }
-    }
 }

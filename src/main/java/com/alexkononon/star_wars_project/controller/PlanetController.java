@@ -1,7 +1,7 @@
 package com.alexkononon.star_wars_project.controller;
 
 import com.alexkononon.star_wars_project.dto.PlanetDTO;
-import com.alexkononon.star_wars_project.service.PlanetService;
+import com.alexkononon.star_wars_project.service.impl.PlanetServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,31 +10,31 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/planets")
 public class PlanetController {
 
-    private final PlanetService planetService;
+    private final PlanetServiceImpl planetServiceImpl;
 
-    public PlanetController(PlanetService planetService) {
-        this.planetService = planetService;
+    public PlanetController(PlanetServiceImpl planetServiceImpl) {
+        this.planetServiceImpl = planetServiceImpl;
     }
 
     @PostMapping
     public ResponseEntity<PlanetDTO> createPlanet(@RequestBody PlanetDTO planetDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(planetService.createPlanet(planetDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(planetServiceImpl.createPlanet(planetDTO));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PlanetDTO> getPlanet(@PathVariable Long id) {
-        return ResponseEntity.ok(planetService.getPlanet(id));
+        return ResponseEntity.ok(planetServiceImpl.getPlanet(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<PlanetDTO> updatePlanet(@PathVariable Long id, @RequestBody PlanetDTO planetDTO) {
-        return ResponseEntity.ok(planetService.updatePlanet(id, planetDTO));
+        return ResponseEntity.ok(planetServiceImpl.updatePlanet(id, planetDTO));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deletePlanet(@PathVariable Long id) {
-        planetService.deletePlanet(id);
-        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Void> deletePlanet(@PathVariable Long id) {
+        planetServiceImpl.deletePlanet(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

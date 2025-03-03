@@ -3,34 +3,37 @@ package com.alexkononon.star_wars_project.controller;
 import com.alexkononon.star_wars_project.dto.CharacterDTO;
 import com.alexkononon.star_wars_project.dto.RegistrationRequest;
 import com.alexkononon.star_wars_project.dto.UserDTO;
-import com.alexkononon.star_wars_project.service.UserService;
+import com.alexkononon.star_wars_project.service.impl.UserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserServiceImpl userServiceImpl) {
+        this.userServiceImpl = userServiceImpl;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<HttpStatus> register(@RequestBody RegistrationRequest registrationRequest) {
         UserDTO userRegistrationDTO = registrationRequest.getUserDTO();
         CharacterDTO characterDTO = registrationRequest.getCharacterDTO();
-        userService.register(userRegistrationDTO, characterDTO);
+        userServiceImpl.register(userRegistrationDTO, characterDTO);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public String login(@RequestBody UserDTO user) {
-        return userService.verify(user);
+        return userServiceImpl.verify(user);
+    }
+
+    @PatchMapping("/users/{id}/grant-role")
+    public ResponseEntity<Void> updateUserRole(@PathVariable Long id, @RequestBody String request) {
+        userServiceImpl.updateUserRole(id, request);
+        return ResponseEntity.ok().build();
     }
 }
