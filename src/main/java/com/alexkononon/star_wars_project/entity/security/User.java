@@ -41,4 +41,8 @@ public class User {
     @ManyToOne(optional = false)
     @JoinColumn(name = "role_id")
     private Role role;
+
+    public String getRole() {
+        return role.getName();
+    }
 }

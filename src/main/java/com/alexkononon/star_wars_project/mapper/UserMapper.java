@@ -13,7 +13,7 @@ public interface UserMapper {
     @Mapping(target = "deleted", ignore = true)
     User fromDtoToUser(UserDTO userDTO, @Context RoleRepository roleRepository);
 
-    @Mapping(target = "role", source = "role.name")
+    @Mapping(target = "role", expression = "java(user.getRole())")
     UserDTO fromUserToDTO(User user);
 
     default Role mapToRole(String roleName, @Context RoleRepository roleRepository) {
