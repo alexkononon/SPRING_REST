@@ -7,19 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface CharacterRepository extends JpaRepository<Character, Long> {
 
-    @Query("SELECT c FROM Character c " +
-            "LEFT JOIN FETCH c.missions " +
-            "LEFT JOIN FETCH c.factions " +
-            "LEFT JOIN FETCH c.subordinates " +
-            "LEFT JOIN FETCH c.supreme " +
-            "LEFT JOIN FETCH c.baseLocation " +
-            "LEFT JOIN FETCH c.currentLocation " +
-            "WHERE c.id = :id")
-    Optional<Character> findByIdWithRelations(@Param("id") Long id);
+    @Query(value = "SELECT * FROM characters", nativeQuery = true)
+    List<Character> findAllCharactersIncludingDeleted();
 }
 

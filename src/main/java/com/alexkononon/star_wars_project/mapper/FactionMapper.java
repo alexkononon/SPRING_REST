@@ -9,13 +9,14 @@ import com.alexkononon.star_wars_project.repository.core.FactionRepository;
 import com.alexkononon.star_wars_project.repository.core.PlanetRepository;
 import org.mapstruct.*;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {FactionRepository.class, PlanetRepository.class, CharacterRepository.class})
 public interface FactionMapper {
 
-    @Mapping(target = "enemyFactionIds", expression = "java(mapFactionIds(faction.getEnemyFactions()))")
+    @Mapping(target = "enemyFactionIds", expression = "java(mapAllEnemyFactionIds(faction))")
     @Mapping(target = "planetIds", expression = "java(mapPlanetIds(faction.getPlanets()))")
     @Mapping(target = "memberIds", expression = "java(mapCharacterIds(faction.getMembers()))")
     FactionDTO fromFactionToDTO(Faction faction);
@@ -60,6 +61,21 @@ public interface FactionMapper {
                 .collect(Collectors.toSet());
     }
 
+    default Set<Long> mapAllEnemyFactionIds(Faction faction) {
+        Set<Long> enemyIds = new HashSet<>();
+        if (faction.getEnemyFactions() != null) {
+            enemyIds.addAll(faction.getEnemyFactions().stream()
+                    .map(Faction::getId)
+                    .collect(Collectors.toSet()));
+        }
+        if (faction.getEnemyOf() != null) {
+            enemyIds.addAll(faction.getEnemyOf().stream()
+                    .map(Faction::getId)
+                    .collect(Collectors.toSet()));
+        }
+        return enemyIds;
+    }
+
     default Set<Long> mapFactionIds(Set<Faction> factions) {
         return factions.stream().map(Faction::getId).collect(Collectors.toSet());
     }
@@ -71,4 +87,5 @@ public interface FactionMapper {
     default Set<Long> mapCharacterIds(Set<Character> characters) {
         return characters.stream().map(Character::getId).collect(Collectors.toSet());
     }
+
 }

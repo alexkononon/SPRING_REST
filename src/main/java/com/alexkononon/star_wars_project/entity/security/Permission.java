@@ -3,10 +3,12 @@ package com.alexkononon.star_wars_project.entity.security;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Setter
 @Entity
+@Where(clause = "is_deleted = false")
 @Table(name = "Permissions")
 public class Permission {
 

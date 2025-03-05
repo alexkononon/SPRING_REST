@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @Setter
 @Entity
 @SQLDelete(sql = "UPDATE users SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 @Table(name = "Users")
 public class User {
     @Id
@@ -34,9 +36,6 @@ public class User {
     @MapsId
     @JoinColumn(name = "id")
     private Character character;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Notification> notifications = new ArrayList<>();
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "role_id")

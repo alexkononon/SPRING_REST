@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Setter
 @Entity
 @SQLDelete(sql = "UPDATE characters SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 @Table(name = "Characters")
 public class Character {
 
@@ -43,7 +45,7 @@ public class Character {
     @JoinColumn(name = "id")
     private EntityObject entityObject;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "mission_characters",
             joinColumns = @JoinColumn(name = "character_id"),
@@ -51,14 +53,14 @@ public class Character {
     )
     private Set<Mission> missions = new HashSet<>();
 
-    @ManyToMany(mappedBy = "members")
+    @ManyToMany(mappedBy = "members", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Faction> factions = new HashSet<>();
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "major_id")
     private Character supreme;
 
-    @OneToMany(mappedBy = "supreme", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "supreme")
     private Set<Character> subordinates = new HashSet<>();
 
     @ManyToOne(optional = true)

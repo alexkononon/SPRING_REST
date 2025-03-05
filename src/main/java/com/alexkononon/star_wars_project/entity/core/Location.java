@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Setter
 @Entity
 @SQLDelete(sql = "UPDATE locations SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 @Table(name = "Locations")
 public class Location {
     @Id
@@ -27,17 +29,17 @@ public class Location {
     private boolean isDeleted;
 
 
-    @ManyToOne(optional = true)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "planet_id", nullable = true)
     private Planet planet;
 
-    @ManyToMany(mappedBy = "locations")
+    @ManyToMany(mappedBy = "locations", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Mission> missions = new HashSet<>();
 
-    @OneToMany(mappedBy = "baseLocation", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "baseLocation", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Character> livingCharacters = new HashSet<>();
 
-    @OneToMany(mappedBy = "currentLocation", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "currentLocation", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Character> stayingCharacters = new HashSet<>();
 
 }
