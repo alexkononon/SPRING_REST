@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/missions")
 public class MissionController {
@@ -24,6 +26,11 @@ public class MissionController {
     @GetMapping("/{id}")
     public ResponseEntity<MissionDTO> getMission(@PathVariable Long id) {
         return ResponseEntity.ok(missionServiceImpl.getMission(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MissionDTO>> getAllMissions() {
+        return ResponseEntity.ok(missionServiceImpl.getAllMissions());
     }
 
     @PutMapping("/{id}")

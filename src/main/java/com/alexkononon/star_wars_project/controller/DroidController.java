@@ -1,10 +1,13 @@
 package com.alexkononon.star_wars_project.controller;
 
 import com.alexkononon.star_wars_project.dto.DroidDTO;
+import com.alexkononon.star_wars_project.dto.ResourceDTO;
 import com.alexkononon.star_wars_project.service.impl.DroidServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/droids")
@@ -24,6 +27,11 @@ public class DroidController {
     @GetMapping("/{id}")
     public ResponseEntity<DroidDTO> getDroid(@PathVariable Long id) {
         return ResponseEntity.ok(droidServiceImpl.getDroid(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DroidDTO>> getAllDroids() {
+        return ResponseEntity.ok(droidServiceImpl.getAllDroids());
     }
 
     @PutMapping("/{id}")

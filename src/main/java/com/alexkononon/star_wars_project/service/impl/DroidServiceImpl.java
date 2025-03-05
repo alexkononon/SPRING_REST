@@ -1,12 +1,16 @@
 package com.alexkononon.star_wars_project.service.impl;
 
 import com.alexkononon.star_wars_project.dto.DroidDTO;
+import com.alexkononon.star_wars_project.dto.PlanetDTO;
 import com.alexkononon.star_wars_project.entity.core.Droid;
 import com.alexkononon.star_wars_project.mapper.DroidMapper;
 import com.alexkononon.star_wars_project.repository.core.DroidRepository;
 import com.alexkononon.star_wars_project.service.DroidService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -31,6 +35,12 @@ public class DroidServiceImpl implements DroidService {
         Droid droid = droidRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Droid not found with id: " + id));
         return droidMapper.fromDroidToDTO(droid);
+    }
+
+    public List<DroidDTO> getAllDroids() {
+        return droidRepository.findAll().stream()
+                .map(droidMapper::fromDroidToDTO)
+                .collect(Collectors.toList());
     }
 
     public DroidDTO updateDroid(Long id, DroidDTO dto) {

@@ -1,10 +1,13 @@
 package com.alexkononon.star_wars_project.controller;
 
 import com.alexkononon.star_wars_project.dto.PlanetDTO;
+import com.alexkononon.star_wars_project.dto.ResourceDTO;
 import com.alexkononon.star_wars_project.service.impl.PlanetServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/planets")
@@ -24,6 +27,11 @@ public class PlanetController {
     @GetMapping("/{id}")
     public ResponseEntity<PlanetDTO> getPlanet(@PathVariable Long id) {
         return ResponseEntity.ok(planetServiceImpl.getPlanet(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PlanetDTO>> getAllPlanets() {
+        return ResponseEntity.ok(planetServiceImpl.getAllPlanets());
     }
 
     @PutMapping("/{id}")

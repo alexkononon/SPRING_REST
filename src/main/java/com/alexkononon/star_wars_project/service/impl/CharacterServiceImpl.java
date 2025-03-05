@@ -1,12 +1,16 @@
 package com.alexkononon.star_wars_project.service.impl;
 
 import com.alexkononon.star_wars_project.dto.CharacterDTO;
+import com.alexkononon.star_wars_project.dto.PlanetDTO;
 import com.alexkononon.star_wars_project.entity.core.Character;
 import com.alexkononon.star_wars_project.mapper.CharacterMapper;
 import com.alexkononon.star_wars_project.repository.core.*;
 import com.alexkononon.star_wars_project.service.CharacterService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -38,6 +42,12 @@ public class CharacterServiceImpl implements CharacterService {
         Character character = characterRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Character not found with id: " + id));
         return characterMapper.fromCharacterToDTO(character);
+    }
+
+    public List<CharacterDTO> getAllCharacters() {
+        return characterRepository.findAll().stream()
+                .map(characterMapper::fromCharacterToDTO)
+                .collect(Collectors.toList());
     }
 
     public CharacterDTO updateCharacter(Long id, CharacterDTO characterDTO) {
