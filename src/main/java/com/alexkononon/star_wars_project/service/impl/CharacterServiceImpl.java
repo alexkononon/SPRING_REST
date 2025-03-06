@@ -1,8 +1,10 @@
 package com.alexkononon.star_wars_project.service.impl;
 
 import com.alexkononon.star_wars_project.dto.CharacterDTO;
-import com.alexkononon.star_wars_project.dto.PlanetDTO;
 import com.alexkononon.star_wars_project.entity.core.Character;
+import com.alexkononon.star_wars_project.entity.core.Faction;
+import com.alexkononon.star_wars_project.entity.core.Location;
+import com.alexkononon.star_wars_project.entity.core.Planet;
 import com.alexkononon.star_wars_project.mapper.CharacterMapper;
 import com.alexkononon.star_wars_project.repository.core.*;
 import com.alexkononon.star_wars_project.service.CharacterService;
@@ -10,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -63,5 +66,44 @@ public class CharacterServiceImpl implements CharacterService {
             throw new RuntimeException("Character not found with id: " + id);
         }
         characterRepository.deleteById(id);
+    }
+
+    public void changeCurrentLocation(Long characterId, Long newLocationId) {
+        Character character = characterRepository.findById(characterId)
+                .orElseThrow(() -> new RuntimeException("Character not found: " + characterId));
+        Location newLocation = locationRepository.findById(newLocationId)
+                .orElseThrow(() -> new RuntimeException("Location not found: " + newLocationId));
+
+        character.setCurrentLocation(newLocation);
+        characterRepository.save(character);
+    }
+
+    public void changeHomeLocation(Long characterId, Long newLocationId) {
+        Character character = characterRepository.findById(characterId)
+                .orElseThrow(() -> new RuntimeException("Character not found: " + characterId));
+        Location newLocation = locationRepository.findById(newLocationId)
+                .orElseThrow(() -> new RuntimeException("Location not found: " + newLocationId));
+
+        if (newLocation.getPlanet() != null) {
+            Planet planet = newLocation.getPlanet();
+
+            if (planet.getFaction() != null) {
+                Faction planetFaction = planet.getFaction();
+
+                Set<Faction> characterFactions = character.getFactions();
+                if (characterFactions != null && !characterFactions.isEmpty()) {
+                    boolean hostile = characterFactions.stream()
+                            .anyMatch(f -> f.getEnemyFactions().contains(planetFaction));
+
+                    if (hostile) {
+                        throw new RuntimeException(
+                                "Cannot change current location: the planet's faction is hostile to one of the character's factions"
+                        );
+                    }
+                }}
+
+        }
+        character.setBaseLocation(newLocation);
+        characterRepository.save(character);
     }
 }

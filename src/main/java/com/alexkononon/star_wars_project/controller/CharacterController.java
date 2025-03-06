@@ -44,5 +44,17 @@ public class CharacterController {
         characterServiceImpl.deleteCharacter(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{characterId}/home-location/{locationId}")
+    public ResponseEntity<Void> changeHomeLocation(@PathVariable Long characterId, @PathVariable Long locationId) {
+        characterServiceImpl.changeHomeLocation(characterId, locationId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{characterId}/current-location/{locationId}")
+    public ResponseEntity<Void> changeCurrentLocation(@PathVariable Long characterId, @PathVariable Long locationId) {
+        characterServiceImpl.changeCurrentLocation(characterId, locationId);
+        return ResponseEntity.noContent().build();
+    }
 }
 
